@@ -1,37 +1,40 @@
 <template>
-	<Disclosure as="nav" class="bg-gray-800" v-slot="{ open }">
-		<div class="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
-			<div class="relative flex h-16 items-center justify-between">
-				<div class="absolute inset-y-0 left-0 flex items-center sm:hidden">
-					<!-- Mobile menu button-->
-					<DisclosureButton class="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
-						<span class="sr-only">Open main menu</span>
-						<Bars3Icon v-if="!open" class="block h-6 w-6" aria-hidden="true" />
-						<XMarkIcon v-else class="block h-6 w-6" aria-hidden="true" />
-					</DisclosureButton>
-				</div>
-				<div class="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
+	<Disclosure as="nav" class="bg-Emerald-500">
+		<div class="px-2 sm:px-6 lg:px-6">
+			<div class="relative flex h-16 justify-between">
+				<div class="flex flex-1 items-stretch">
 					<div class="flex flex-shrink-0 items-center">
-						<img class="block h-8 w-auto lg:hidden" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500" alt="Your Company" />
-						<img class="hidden h-8 w-auto lg:block" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500" alt="Your Company" />
-					</div>
-					<div class="hidden sm:ml-6 sm:block">
-						<div class="flex space-x-4">
-							<a v-for="item in navigation" :key="item.name" :href="item.href" :class="[item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white', 'rounded-md px-3 py-2 text-sm font-medium']" :aria-current="item.current ? 'page' : undefined">{{ item.name }}</a>
-						</div>
+						<img class="h-16 w-auto lg:block dark:h-50" src="./../../img/eth-white.svg" alt="Your Company" />
 					</div>
 				</div>
 				<div class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-					<button type="button" class="rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                    <button @click="isOpen = !isOpen">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.5"
+                            stroke="currentColor"
+                            class="w-6 h-6 text-white"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+                            />
+                        </svg>
+                    </button>
+					<button type="button" class="rounded-full bg-Emerald-500 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
 						<span class="sr-only">View notifications</span>
 						<BellIcon class="h-6 w-6" aria-hidden="true" />
 					</button>
 					<!-- Profile dropdown -->
 					<Menu as="div" class="relative ml-3">
-						<div>
-							<MenuButton class="flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+						<div class="flex">
+							<MenuButton class="flex bg-Emerald-500 text-sm outline-none">
 								<span class="sr-only">Open user menu</span>
-								<img :src="currentUserImage" class="h-8 w-8 rounded-full"  alt="" />
+								<img :src="userPicture" class="h-8 w-8 rounded-full"  alt="" />
+                                <p class="text-white pl-4 m-auto">{{ userInfos.name }}</p>
 							</MenuButton>
 						</div>
 						<transition enter-active-class="transition ease-out duration-100" enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100" leave-active-class="transition ease-in duration-75" leave-from-class="transform opacity-100 scale-100" leave-to-class="transform opacity-0 scale-95">
@@ -48,52 +51,25 @@
 							</MenuItems>
 						</transition>
 					</Menu>
+                    <SunIcon v-if="isDark" class="w-6 h-6 ml-6 text-white cursor-pointer" @click="toggleDark()"/>
+                    <MoonIcon v-else class="w-6 h-6 ml-6 text-white cursor-pointer"/>
 				</div>
 			</div>
 		</div>
-		<DisclosurePanel class="sm:hidden">
-			<div class="space-y-1 px-2 pt-2 pb-3">
-				<DisclosureButton v-for="item in navigation" :key="item.name" as="a" :href="item.href" :class="[item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white', 'block rounded-md px-3 py-2 text-base font-medium']" :aria-current="item.current ? 'page' : undefined">{{ item.name }}</DisclosureButton>
-			</div>
-		</DisclosurePanel>
 	</Disclosure>
-					<p class="bg-white p-1 text-black hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
-						<span class="sr-only">{{ userInfos }}</span>
-					</p>
-					<h1>{{ current-userImage }}TEST</h1>
 </template>
 <script setup>
 	import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
-	import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/vue/24/outline';
+	import { Bars3Icon, BellIcon, MoonIcon, SunIcon, XMarkIcon } from '@heroicons/vue/24/outline';
 	import axios from 'axios';
-	import { useRouter } from 'vue-router'
+	import { useRouter } from 'vue-router';
+    import { ref } from "vue";
+    import { useDark, useToggle } from '@vueuse/core';
+    const isDark = useDark();
+    const toggleDark = useToggle(isDark);
 
-	const props = defineProps({
-		'current-userImage': {
-			type: String,
-			required: true
-		}
-	});
-
-	const currentUserImage = props['current-userImage'];
-	console.log(currentUserImage);
-	const logout = async () => {
-		const router = useRouter()
-		try {
-			await axios.post('/logout')
-    			router.push('/')
-		} catch (error) {
-			location.reload()
-		}
-	}
-	const userInfos = async () => {
-		await axios.get('api/user')
-	}
-	const navigation = [
-		{ name: 'Dashboard', href: 'Dashboard', current: true },
-		{ name: 'Team', href: '#', current: false },
-		{ name: 'Projects', href: '#', current: false },
-		{ name: 'Calendar', href: '#', current: false },
-	];
-	console.log(userInfos());
+    const isOpen = ref(false);
+    const props = defineProps(['userImage', 'userInfos']);
+    const userInfos = JSON.parse(props.userInfos);
+    const userPicture = props['userImage'];
 </script>

@@ -6,19 +6,22 @@ import App from './App.vue';
 import NavBar from './components/NavBar.vue';
 import SideBar from './components/SideBar.vue';
 import PreviewImage from './components/PreviewImage.vue';
+import Test from './components/Test.vue';
 
 window.Alpine = Alpine;
 
 Alpine.start();
 
-const app = createApp(App);
+const app = createApp();
 const previewImage = createApp(PreviewImage);
-const navBar = createApp(NavBar);
 
-app.component('SideBar', SideBar);
+app
+    .component('NavBar', NavBar)
+    .component('SideBar', SideBar)
+    .component('Test', Test);
 app.mount('#app');
 
-navBar.mount('NavBar', NavBar);
+
 
 
 previewImage.mount('PreviewImage', PreviewImage);

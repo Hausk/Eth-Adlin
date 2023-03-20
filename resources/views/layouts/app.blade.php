@@ -14,8 +14,8 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="font-sans antialiased">
-        <div class="min-h-screen bg-gray-100">
+    <body class="font-sans antialiased h-screen overflow-hidden">
+        <div class="bg-gray-100">
             <!-- Page Heading -->
             @if (isset($header))
                 <header class="bg-white shadow">
@@ -24,10 +24,15 @@
                     </div>
                 </header>
             @endif
-
             <!-- Page Content -->
             <main>
-                {{ $slot }}
+                <div id="app">
+                    <nav-bar user-image="{{ asset(Auth::user()->picture) }}" user-infos="{{ Auth::user() }}"></nav-bar>
+                    <div class="flex">
+                        <side-bar></side-bar>
+                        {{ $slot }}
+                    </div>
+                </div>
             </main>
         </div>
     </body>
